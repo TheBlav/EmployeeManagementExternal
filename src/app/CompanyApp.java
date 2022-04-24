@@ -28,6 +28,7 @@ public class CompanyApp implements Serializable, Printer {
         if (fileExists) {
             int currentChoice = inOut.choice();
             if (currentChoice == 1) {      // zapis plików
+
                 for (int i = 0; i < company.employees.length; i++) {
                     company.addEmployeeManually();
                 }
@@ -48,6 +49,7 @@ public class CompanyApp implements Serializable, Printer {
 
             if (currentChoice == 2) {        // odczyt z pliku
                 boolean endOfFile = false;
+                company.setCurretEmployee(0);
                 do {
                     try (
                             var fis = new FileInputStream(fileName);
@@ -68,6 +70,9 @@ public class CompanyApp implements Serializable, Printer {
                         print(person.toString());
                     }
                 }    while (!endOfFile);     // koniec odczytu pliku
+                for (Person employee : company.employees) {
+                        print(employee.toString());
+                }
             }
         }
     }

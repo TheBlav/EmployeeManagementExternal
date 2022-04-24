@@ -9,6 +9,7 @@ public class Company implements Printer {
    Person[] employees = new Employee[MAX_EMPLOYEES];
    private int curretEmployee = 0;
    IO inOut = new IO();
+
    public void addEmployeeManually(){
         if (curretEmployee<MAX_EMPLOYEES) {
             employees[curretEmployee] = inOut.getEmployee();
@@ -24,9 +25,17 @@ public class Company implements Printer {
            employees[curretEmployee] = employee;
            curretEmployee++;
        }
-       else
-           print("Osiąnięto maksymalną liczbę pracowników: "+MAX_EMPLOYEES);
+       if (curretEmployee>=MAX_EMPLOYEES){
+           print("Osiąnięto maksymalną liczbę pracowników: "+MAX_EMPLOYEES); }
    }
+
+    public int getCurretEmployee() {
+        return curretEmployee;
+    }
+
+    public void setCurretEmployee(int curretEmployee) {
+        this.curretEmployee = curretEmployee;
+    }
 
     public void printEmployees () {
         for (Person employee : employees) {

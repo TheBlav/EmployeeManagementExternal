@@ -24,7 +24,7 @@ public class IO implements Printer{
                 error = false;
                 sc.nextLine();
             }
-        } while (error);
+        } while (!error);
         return new Employee(firstName, lastName, salary);
     }
 
