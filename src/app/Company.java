@@ -1,49 +1,29 @@
 package app;
 import data.Employee;
-import data.Person;
-import io.IO;
 import io.Printer;
 
-public class Company implements Printer {
-   private final int MAX_EMPLOYEES = 3;
-   Person[] employees = new Employee[MAX_EMPLOYEES];
-   private int curretEmployee = 0;
-   IO inOut = new IO();
+import java.io.Serializable;
 
-   public void addEmployeeManually(){
-        if (curretEmployee<MAX_EMPLOYEES) {
-            employees[curretEmployee] = inOut.getEmployee();
-            curretEmployee++;
-        }
-        else
-            print("Osiąnięto maksymalną liczbę pracowników: "+MAX_EMPLOYEES);
+public class Company implements Printer, Serializable {
+   public static final int MAX_EMPLOYEES = 3;
+   private Employee[] employees = new Employee[MAX_EMPLOYEES];
+   private int currentEmployee = 0;
 
+
+   public void add(Employee employee) {
+       employees[currentEmployee] = employee;
+       currentEmployee++;
    }
 
-   public void addEmployeeFromFile(Employee employee){
-       if (curretEmployee<MAX_EMPLOYEES) {
-           employees[curretEmployee] = employee;
-           curretEmployee++;
-       }
-       if (curretEmployee>=MAX_EMPLOYEES){
-           print("Osiąnięto maksymalną liczbę pracowników: "+MAX_EMPLOYEES); }
-   }
 
-    public int getCurretEmployee() {
-        return curretEmployee;
-    }
 
-    public void setCurretEmployee(int curretEmployee) {
-        this.curretEmployee = curretEmployee;
-    }
-
-    public void printEmployees () {
-        for (Person employee : employees) {
-            print(employee.toString());
-
+    @Override
+    public String toString() {
+       StringBuilder builder = new StringBuilder();
+        for (Employee employee : employees) {
+            builder.append(employee.toString());
+            builder.append("\n");
         }
-
-
+        return builder.toString();
     }
-
 }

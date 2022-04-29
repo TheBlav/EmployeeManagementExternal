@@ -1,79 +1,76 @@
 package app;
-
-import java.io.*;
-
-import app.Company;
 import data.Employee;
-import data.Person;
-import io.IO;
 import io.Printer;
 
-public class CompanyApp implements Serializable, Printer {
-    String fileName = "Employees.obj";
-    Employee person = null;
+import javax.print.DocFlavor;
+import java.io.*;
+import java.util.Scanner;
 
-    public void CompanyApp() {
-        Company company = new Company();
-        File file = new File(fileName);
-        IO inOut = new IO();
+public class CompanyApp implements Printer {
+    private static final String fileName = "Employees.info";
+    private static final int READ_FROM_USER = 1;
+    private static final int READ_FROM_FILE = 2;
 
-        boolean fileExists = file.exists();
-        if (!fileExists) {
+    static Scanner sc = new Scanner(System.in);
+
+    public void CompanyApp (){
+        print("Wprowarzanie danych pracowników: " + READ_FROM_USER);
+        print("Wczytaj i wyświetl dane z pliku: " + READ_FROM_FILE);
+        int option = sc.nextInt();
+        sc.nextLine();
+
+        if (option == READ_FROM_USER){
+            Company company = createCompany();
+            WriteFile(company);
+            print(company.toString());
+        }
+        else if (option == READ_FROM_FILE) {
+            Company company = null;
             try {
-                fileExists = file.createNewFile();
-            } catch (IOException e) {
-                System.err.println("nie udało się utworzyć pliku");
+                company = readFile();
+            } catch (IOException | ClassNotFoundException e) {
+                System.err.println("błąd odczytu danych");
+                e.printStackTrace();
             }
+            print(company.toString());
         }
-        if (fileExists) {
-            int currentChoice = inOut.choice();
-            if (currentChoice == 1) {      // zapis plików
+        sc.close();
+    }
 
-                for (int i = 0; i < company.employees.length; i++) {
-                    company.addEmployeeManually();
-                }
-                try (
-                        var fs = new FileOutputStream(fileName);
-                        var os = new ObjectOutputStream(fs);
-                ) {
-                    for (Person employee : company.employees) {
-                        os.writeObject(employee);
-                    }
-                } catch (FileNotFoundException e) {
-                   System.err.println("nie znaleziono pliku");
-                } catch (IOException e) {
-                    System.err.println("Bład strumienia danych");
-                    e.printStackTrace();
-                }
-            }  // koniec zapisu plików
-
-            if (currentChoice == 2) {        // odczyt z pliku
-                boolean endOfFile = false;
-                company.setCurretEmployee(0);
-                do {
-                    try (
-                            var fis = new FileInputStream(fileName);
-                            var ois = new ObjectInputStream(fis);
-                    ) {
-                        person = (Employee) ois.readObject();
-                        company.addEmployeeFromFile(person);
-                        if (ois.readObject()==null){
-                            endOfFile = true;
-                        }
-
-                    } catch (IOException | ClassNotFoundException e) {
-                        System.err.println("Bład strumienia danych");
-                        e.printStackTrace();
-                    }
-                    if (person != null) {
-                        print("Wczytano dane o: ");
-                        print(person.toString());
-                    }
-                }    while (!endOfFile);     // koniec odczytu pliku
-                for (Person employee : company.employees) {
-                        print(employee.toString());
-                }
-            }
+    private Company readFile() throws IOException, ClassNotFoundException {
+        try(
+                var fis = new FileInputStream(fileName);
+                var ois = new ObjectInputStream(fis);
+                ){
+            return (Company) ois.readObject();
         }
+        }
+
+
+    private void WriteFile(Company company) {
+        try(
+                var fis = new FileOutputStream(fileName);
+                var oos = new ObjectOutputStream(fis);
+                ){
+            oos.writeObject(company);
+            print("Zapisano dane do pliku");
+        } catch (IOException e){
+            System.err.println("Błąd zapisu danych");
+        }
+    }
+
+    private static Company createCompany(){
+        Company company = new Company();
+        for (int i=0; i<company.MAX_EMPLOYEES; i++){
+            System.out.print("Wprowadź imię: ");
+            String firstName = sc.nextLine();
+            System.out.print("Wprowadź nazwisko: ");
+            String lastName = sc.nextLine();
+            System.out.print("Wprowadź wypłątę: ");
+            double salary = sc.nextDouble();
+            sc.nextLine();
+            company.add(new Employee(firstName, lastName, salary));
+        }
+            return company;
     }
 }

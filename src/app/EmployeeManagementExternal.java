@@ -1,5 +1,4 @@
 package app;
-import app.CompanyApp;
 
 public class EmployeeManagementExternal {
     public static void main(String[] args) {
